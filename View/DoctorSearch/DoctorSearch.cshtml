@@ -1,0 +1,343 @@
+﻿@model MVC.Models.DoctorMasterDTOVM
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Search";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tariaq</title>
+
+    <link href="~/Scripts/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Amiri&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Date Time picker -->
+
+    <link href="~/Scripts/css/tempusdominus-bootstrap-4.css" rel="stylesheet">
+
+
+
+
+    <link href="~/Scripts/css/style.css" rel="stylesheet" />
+
+</head>
+<body>
+    <!--Top Bar -->
+    <section>
+        <div class="topbar">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6"><div class="logo"><img src="~/Images/logo.jpg"></div></div>
+                    <div class="col-sm-6 ">
+                        <div class="rightbox ">
+                            <div class="row ">
+
+                                <div class="lang_btn ">
+                                    <ul>
+                                        <li><a href="#">EN</a></li>
+                                        <li><a href="#">AR</a></li>
+                                    </ul>
+                                </div>
+
+
+                                <div class="flag_btn ">
+                                    <ul>
+                                        <li><a href="#"><img src="~/Images/oman.jpg"></a></li>
+                                        <li><a href="#"><img src="~/Images/qatar.jpg"></a></li>
+                                        <li><a href="#"><img src="~/Images/uae.jpg"></a></li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                            <div class="row position">
+                                <div class="login-reg "><a href="#">Login/Register</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Banner-->
+    <!--Search Box-->
+    <section>
+        <div class="inner-heading" style="background-image:url(../Images/inner-heading.jpg)">
+            <div class="container">
+
+                <div class="s002">
+                    <form class="inner">
+                        <fieldset>
+                            <legend class="mb-3 mt-5 blue">Find a specialist near to you....</legend>
+                        </fieldset>
+                        <div class="inner-form">
+                            <div class="input-field first-wrap">
+                                <div class="icon-wrap">
+                                    <img class="mr-2 pb-1 " src="~/Images/location.svg" width="16px" />
+                                </div>
+                                @Html.TextBoxFor(m => m.Location, new { placeholder = "Where are you looking for?", id = "txtSearch" })
+                            </div>
+                            <div class="input-field second-wrap">
+                                <div class="icon-wrap">
+                                    <img class="mr-2 pb-1" src="~/Images/department.svg" width="16px" />
+                                </div>
+                                @Html.DropDownListFor(model => model.ReferenceTypeID, new SelectList(Model.ListReferenceType, "ReferenceTypeID", "ReferenceTypeName"))
+                            </div>
+
+                            <div class="input-field fourth-wrap">
+                                <div class="icon-wrap"> <img class="mr-2 mt-1 pb-1" src="~/Images/search.svg" width="14px" /> </div>
+                                @Html.TextBoxFor(m => m.ReferenceName, new { placeholder = "Enter Doctor name,Department,Hospital...", id = "txtSearch2", @class = "form-control" })
+                            </div>
+                            <div class="input-field fifth-wrap">
+                                <input type="submit" onclick="return Valdateform();" class="btn-search" name="SearchButton" value="SEARCH" />
+                            </div>
+                        </div>
+
+                        <div class="container ">
+                            <div class="row">
+                                <div class="blue mt-3 mb-0 ">
+                                    <h5><b>Advance Search </b></h5>
+                                </div>
+                                <div class="row ">
+
+                                    <div class="col-sm-5 mb-3">
+                                        <div class="input-group " id="datetimepicker1" data-target-input="nearest">
+                                            <span class="pt-2 mr-2">Select Date From </span>
+                                            @Html.TextBoxFor(model => model.FromDate, "{0:yyyy-MM-dd}", new { @class = "form-control datetimepicker-input" })
+                                            <div class="input-group-append" data-target="#FromDate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-sm-4 mb-3">
+
+                                        <div class="input-group " id="datetimepicker2" data-target-input="nearest">
+                                            <span class="pt-2 mr-2">To </span>
+                                            @Html.TextBoxFor(model => model.ToDate, "{0:yyyy-MM-dd}", new { @class = "form-control datetimepicker-input" })
+                                            <div class="input-group-append " data-target="#ToDate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+
+                                        <div class="form-group">
+                                            <label for="sel1">Select Language</label>
+                                            @Html.DropDownListFor(model => model.LanguageID, new SelectList(Model.ListLanguage, "LanguageID", "Language"), new { style = "width: 50%", @class = "form-control ml-2 datebox" })
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!--Search Box-->
+    <!--Search Result-->
+    <section>
+        <div class="search-result">
+            <div class="container">
+                <h2 class="blue mb-3">Your Search Result for Booking</h2>
+
+                @if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                {
+                    foreach (var item in Model.SearchResults)
+                    {
+                        string strImage = "/Images/" + @Html.DisplayFor(modelItem => item.DoctorName) + ".jpg";
+
+                        <section>
+                            <div class="white-box mb-5">
+                                <div class="row">
+                                    <div class="col-sm-8">
+
+                                        <div class="row">
+                                            <div class="col-sm-7 ">
+                                                <img src="@strImage" width="100%" class="img-fluid">
+
+                                                <div class="thumb">
+                                                    <img src="~/Images/thumb1.jpg">
+                                                    <img src="~/Images/thumb2.jpg">
+                                                    <img src="~/Images/thumb3.jpg">
+                                                    <img src="~/Images/thumb4.jpg">
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                <h3>@Html.DisplayFor(modelItem => item.DoctorName)</h3>
+                                                <p>@Html.DisplayFor(modelItem => item.Department)</p>
+                                                <p>@Html.DisplayFor(modelItem => item.Hospital)</p>
+                                                <input type="button" class="btn btn-outline-secondary btn-sm greybtn " style="width: 100px;" value=" Profile ">
+                                                <p>Languages know : @Html.DisplayFor(modelItem => item.Language)</p>
+                                                <p><img class="mr-1 pb-1 " src="~/Images/location.svg" width="16px" />@Html.DisplayFor(modelItem => item.Location)</p>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 pl-4">
+                                        <div class=" ">
+                                            <h5>Available Time Slots for Booking</h5>
+                                            @foreach (var ch in Model.SearchResultsConsultHours.Where(s => s.DoctorID == item.DoctorID))
+                                            {
+                                                if (ch.ConsultingTime == "Morning")
+                                                {
+                                                    <p><img src="~/Images/sunrise.svg" width="16px" />Morning</p>
+                                                }
+                                                else if (ch.ConsultingTime == "Afternoon")
+                                                {
+                                                    <div style="margin-top: 10px"></div>
+                                                    <p><img src="~/Images/afternoon.svg" width="16px" />Afternoon</p>
+                                                }
+                                                else if (ch.ConsultingTime == "Evening")
+                                                {
+                                                    <div style="margin-top: 10px"></div>
+                                                    <p><img src="~/Images/evening.svg" width="16px" />Evening</p>
+                                                }
+                                                else
+                                                {
+                                                    if (ch.StatusID == 1)
+                                                    {
+                                                        <input type="button" class="btn btn-outline-secondary btn-sm greenbtn" value=@Html.DisplayFor(modelItem => ch.ConsultingTime)>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="button" class="btn btn-outline-secondary btn-sm greybtn" value=@Html.DisplayFor(modelItem => ch.ConsultingTime)>
+                                                    }
+                                                }
+                                            }
+                                            <p><input type="button" class="btn mt-3 btn-outline-secondary btn-sm bluebtn " value="Book Now"></p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    }
+                }
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <!--Footer Section-->
+    <footer>
+        <div class="footerbox">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-3 mb-2">
+                        <div class="footerlogo"><img src="~/Images/footerlogo.jpg"></div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="footerlinks">
+                            <h4>Useful Lins</h4>
+                            <ul>
+                                <li><a href="#"> Home</a></li>
+                                <li><a href="#"> Doctors</a></li>
+                                <li><a href="#"> Hospitals</a></li>
+                                <li><a href="#"> Medicines</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 mb-2">
+                        <div class="footerlinks">
+                            <h4>Useful Lins</h4>
+                            <ul>
+                                <li><a href="#"> About Us</a></li>
+                                <li><a href="#"> Faq</a></li>
+                                <li><a href="#"> Terms and Conditions</a></li>
+                                <li><a href="#"> Help</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3 mb-2">
+                        <div class="footerlinks">
+                            <h4>Contact Us</h4>
+                            <ul>
+                                <li>Tariaq, Park Lane Tower</li>
+                                <li>Office 610, Dubai, UAE</li>
+                                <li><a href="mailto:mail@tariaq.com"> E: mail@tariaq.com</a></li>
+                                <li><a href="tel:971 4 551 5640"> T: +971 4 551 5640</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 mt-1">Copyright © 2019, Tariaq. All rights reserved.</div>
+                    <div class="col-sm-6 text-right">
+                        <div class="social">
+
+                            <i class="fa fa-facebook"></i>
+                            <i class="fa fa-instagram"></i>
+                            <i class="fa fa-twitter"></i>
+                            <i class="fa fa-whatsapp"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="~/Scripts/js/jquery-1.11.1.min.js"></script>
+    <script src="~/Scripts/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/js/tempusdominus-bootstrap-4.js"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#FromDate').datetimepicker();
+        });
+
+        $(function () {
+            $('#ToDate').datetimepicker();
+        });
+
+    </script>
+
+
+
+
+</body>
+</html>

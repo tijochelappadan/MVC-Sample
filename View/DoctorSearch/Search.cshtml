@@ -1,0 +1,293 @@
+﻿@model MVC.Models.DoctorMasterDTOVM
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Search";
+}
+
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<link href="~/Scripts/jquery-ui.min.css" rel="stylesheet" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtSearch").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/DoctorSearch/GetDatabyDoctorName",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.DoctorName, value: item.DoctorID };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtSearch2").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/DoctorSearch/GetReference",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.ReferenceName, value: item.ReferenceID };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+    })
+</script>
+
+<script type="text/javascript">
+    $.noConflict();
+</script>
+
+@using (Html.BeginForm("Search", "DoctorSearch", FormMethod.Get))
+{    
+    <section class="content">
+        <fieldset>
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row" style="background-image:url(../Images/inner-heading.jpg)">
+                        <div class="container">
+                            <div style="margin-top: 60px"></div>
+                            <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-12" style="color: #00b6f8;">
+                                <h1>Find a specialist near to you...</h1>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="input-group col-lg-12 col-md-12 col-sm-6 col-xs-12">
+                                    <div class="input-group col-lg-3 col-md-3 col-sm-6 col-xs-12" style="background-color:white;">
+                                        <img src="~/Images/location.svg" width="16px" />
+                                        @Html.TextBoxFor(m => m.DoctorName, new { style = "border-style: none; border-right: 1px solid #ddd; height: 50px; width: 230px;", placeholder = "What are you looking for?", id = "txtSearch", @class = "form-control" })
+                                    </div>
+                                    
+                                    <div class="input-group col-lg-3 col-md-3 col-sm-6 col-xs-12" style="background-color:white;">
+                                        <img src="~/Images/department.svg" width="16px" />
+                                        @Html.DropDownListFor(model => model.ReferenceTypeID, new SelectList(Model.ListReferenceType, "ReferenceTypeID", "ReferenceTypeName"), new { style = "border-style: none; height: 50px; width: 230px;", @class = "form-control" })
+                                    </div>
+
+                                    <div class="input-group col-lg-3 col-md-3 col-sm-6 col-xs-12" style="background-color:white;">
+                                        <img src="~/Images/search.svg" width="16px" />
+                                        @Html.TextBoxFor(m => m.ReferenceName, new { style = "border-style: none; height: 50px; width: 230px;", placeholder = "Enter Department,Hospital,Location....", id = "txtSearch2", @class = "form-control" })
+                                    </div>
+
+                                    <div class="input-group col-lg-3 col-md-3 col-sm-6 col-xs-12" style="padding-left: 0px;">
+                                        <input type="submit" onclick="return Valdateform();" class="btn btn-info btn-pressure" name="SearchButton" value="SEARCH" style="width:200px; height: 50px; border-radius: 0px; background-color:#00b6f8;" />
+                                    </div>                                        
+                                </div>
+
+                                <div class="clearfix"></div>
+                                <div style="margin-top: 20px"></div>
+                                <div class="col-md-12">
+                                    <div class="input-group col-lg-12 col-md-12 col-sm-12 col-xs-12" style="color: #00b6f8;">
+                                        <h4>Advance Search</h4>
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                    <div class="input-group col-lg-5 col-md-4 col-sm-6 col-xs-12">
+                                        @Html.DisplayNameFor(model => model.FromDate)
+                                        @Html.TextBoxFor(model => model.FromDate, "{0:yyyy-MM-dd}", new { Style = "min-width: 290px;", @class = "form-control" })
+                                    </div>
+
+                                    <div class="input-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        @Html.DisplayNameFor(model => model.ToDate)
+                                        @Html.TextBoxFor(model => model.ToDate, "{0:yyyy-MM-dd}", new { Style = "min-width: 290px;", @class = "form-control" })
+                                    </div>
+
+                                    <div class="input-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                        @Html.DisplayNameFor(model => model.LanguageID)
+                                        @Html.DropDownListFor(model => model.LanguageID, new SelectList(Model.ListLanguage, "LanguageID", "Language"), new { Style = "width: 140px;", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px"></div>
+
+                    <div class="container">
+                        <div class="input-group col-lg-12 col-md-12 col-sm-12 col-xs-12" style="color: #00b6f8;">
+                            <h1>Your Search Result for Booking....</h1>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <div class="clearfix"></div>
+                                <div id="gridContent" style="padding: 20px;">
+                                    @if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                                    {
+                                        foreach (var item in Model.SearchResults)
+                                        {
+                                            string strImage = "/Images/" + @Html.DisplayFor(modelItem => item.DoctorName) + ".jpg";
+
+                                            <div class="col-sm-12">
+                                                <div class="row" style="box-shadow: 0px 0px 10px 4px rgba(225, 225, 225, 0.75); padding: 20px;">
+                                                    <div class="col-sm-4">
+                                                        <img src="@strImage" />
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <h3>@Html.DisplayFor(modelItem => item.DoctorName)</h3>
+                                                        <p>@Html.DisplayFor(modelItem => item.Department)</p>
+                                                        <p>@Html.DisplayFor(modelItem => item.Hospital)</p>
+                                                        <input type="button" class="btn btn-outline-secondary btn-sm greybtn" style="width: 100px;" value=" Profile ">
+                                                        <p>Languages know : @Html.DisplayFor(modelItem => item.Language)</p>
+                                                        <p><img class="mr-1 pb-1 " src="~/Images/location.svg" width="16px" />@Html.DisplayFor(modelItem => item.Location)</p>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <h4>Available Time Slots for Booking</h4>
+
+                                                        @foreach (var ch in Model.SearchResultsConsultHours.Where(s => s.DoctorID == item.DoctorID))
+                                                        {
+                                                            if (ch.ConsultingTime == "Morning")
+                                                            {
+                                                                <p><img src="~/Images/sunrise.svg" width="16px" />Morning</p>
+                                                            }
+                                                            else if (ch.ConsultingTime == "Afternoon")
+                                                            {
+                                                                <div style="margin-top: 10px"></div>
+                                                                <p><img src="~/Images/afternoon.svg" width="16px" />Afternoon</p>
+                                                            }
+                                                            else if (ch.ConsultingTime == "Evening")
+                                                            {
+                                                                <div style="margin-top: 10px"></div>
+                                                                <p><img src="~/Images/evening.svg" width="16px" />Evening</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (ch.StatusID == 1)
+                                                                {
+                                                                    <input type="button" class="btn btn-outline-secondary btn-sm btn-success" value=@Html.DisplayFor(modelItem => ch.ConsultingTime)>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="button" class="btn btn-outline-secondary btn-sm greybtn" value=@Html.DisplayFor(modelItem => ch.ConsultingTime)>
+                                                                }
+                                                            }
+                                                        }
+
+                                                        <div style="margin-top: 40px"></div>
+                                                        @Html.ActionLink("Book Now", "Search", "DoctorSearch", new { @class = "btn btn-info btn-pressure", @style = "width:300px; background-color: #0778a2; border-color: #0778a2;" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div style="margin-top: 20px"></div>
+                                        }
+                                    }
+
+                                    @*@if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                        {
+                            var grid = new WebGrid(Model.SearchResults, defaultSort: "DeveloperCount");
+                            @grid.GetHtml(
+                                tableStyle: "webgrid-table",
+                                headerStyle: "webgrid-header",
+                                footerStyle: "webgrid-footer",
+                                alternatingRowStyle: "webgrid-alternating-row",
+                                selectedRowStyle: "webgrid-selected-row",
+                                rowStyle: "webgrid-row-style",
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns
+                                (
+                                    grid.Column("DoctorName", header: "Name", style: "300px"),
+                                    grid.Column("Department", "Department"),
+                                    grid.Column("Hospital", "Hospital"),
+                                    grid.Column("Location", "Location"),
+                                    grid.Column("Language", "Language"),
+                                    grid.Column("ConsultationHours", "ConsultationHours")
+                                ))
+
+                            if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                            {
+                                @Html.PagedListPager(Model.SearchResults, page => Url.Action("PaymentDetails", new RouteValueDictionary()
+                                {
+                                { "Page", page },
+                                { "DoctorSearch", Model.DoctorSearch },
+                                { "DoctorName", Model.DoctorName },
+                                { "DepartmentID", Model.DepartmentID },
+                                { "HospitalID", Model.HospitalID },
+                                { "LocationID", Model.LocationID },
+                                { "LanguageID", Model.LanguageID }
+                                }), PagedListRenderOptions.PageNumbersOnly)
+                            }
+                        }*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </section>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function rebindpanel() {
+
+            if ('@Model.DoctorSearch' == '1') {
+
+                document.getElementById("MDID1").style.display = "block";
+                document.getElementById("MDID2").style.display = "none";
+            }
+
+            else if ('@Model.DoctorSearch' == '2') {
+
+                document.getElementById("MDID2").style.display = "block";
+                document.getElementById("MDID1").style.display = "none";
+            }
+            else {
+
+                document.getElementById("MDID1").style.display = "none";
+                document.getElementById("MDID2").style.display = "none";
+            }
+        }
+
+        window.onload = rebindpanel();
+    </script>
+
+    <script src="~/Scripts/jquery-ui.js"></script>
+    @Styles.Render("~/Content/themes/base/css")
+
+    <script type="text/javascript">
+        var d = new Date();
+        $('#FromDate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            changeday: true,
+            dateFormat: "yy-mm-dd",
+            yearRange: "2015:2050"
+        });
+    </script>
+
+    <script type="text/javascript">
+        var d = new Date();
+        $('#ToDate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            changeday: true,
+            dateFormat: "yy-mm-dd",
+            yearRange: "2015:2050"
+        });
+    </script>
+}
